@@ -5,7 +5,8 @@ Naming skins for MX Simulator is confusing and tedious so this script was made t
 ## How to Use
 
 **You will need Python installed on your machine to use this*
-
+### Prep
+You will need *at least* one diffuse map (You can use as many diffuse maps as you want). This is the map that your graphics are on. This map can be named whatever you want it to be but it cannot have 'N[n]orm' or 'S[s]pec' in it. Optionally you can also use normal and specular maps. These need to have 'N[n]orm' and 'S[s]pec' in the name, respectively.
 ### Install Python
 1. Go to (https://www.python.org/downloads/) and download the latest release of Python
 2. Follow the installer instructions for your operating system
