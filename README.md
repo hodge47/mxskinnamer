@@ -1,4 +1,4 @@
-# mxsskinnamer
+# mxskinnamer
 This is a python script to appropriately name provided skin textures for the desired dyno.
 Naming skins for MX Simulator is confusing and tedious so this script was made to make the process easier. This script works with multiple diffuse maps at once and with or without a normal and/or specular map.
 
