@@ -6,6 +6,7 @@ from os.path import isfile, join, splitext
 
 # Create TKinter window and set the min size
 root = Tk()
+root.title("MXSkinNamer")
 root.minsize(600, 480)
 
 bikeDynos = {"Honda (450f)": "crf450v2017", "Husqvarna (450f)": "fc450v2016",
