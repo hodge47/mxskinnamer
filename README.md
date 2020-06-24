@@ -35,6 +35,6 @@ You can either rename skins and JMs separately on their own or all together at o
    - Click the 'Rename Maps' button to only rename skins and maps
    - Click the 'Rename JMs' button to only rename JM files
 5. Navigate to the directory where your skins were saved
-   - __*Note: Skins/maps and JM files are now copied and then renamed to avoid a destructive workflow. Your files will be saved in your skins/jm directory under 'RenamedFiles/<Model Name>/Maps' or 'RenamedFiles/<Model Name>/JM'*__
+   - __*Note: Skins/maps and JM files are now copied and then renamed to avoid a destructive workflow. Your files will be saved in your skins/jm directory under 'RenamedFiles/Model Name/Maps' or 'RenamedFiles/Model Name/JM'*__
 6. (Optional) Scram and saf your bike maps
 7. Move to your game install directory or personal folder
