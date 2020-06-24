@@ -31,10 +31,14 @@ You can either rename skins and JMs separately on their own or all together at o
 2. Type the model name you're saving for in the 'Model Name' text box. This is what your JM name is after the dyno
 3. Select the dyno that you're saving for in the 'Dyno' list. This contains bikes, rider body, helmet, and wheels
 4. Rename buttons
+
   1. Click the 'Rename All' button to rename skins and JM files
   2. Click the 'Rename Maps' button to only rename skins and maps
   3. Click the 'Rename JMs' button to only rename JM files
+  
 5. Navigate to the directory where your skins were saved
+
   * *Note*: Skins/maps and JM files are now copied and then renamed to avoid a destructive workflow. Your files will be saved in your skins/jm directory under 'RenamedFiles/<Model Name>/Maps' or 'RenamedFiles/<Model Name>/JM'
+  
 6. (Optional) Scram and saf your bike maps
 7. Move to your game install directory or personal folder
