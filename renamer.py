@@ -12,7 +12,7 @@ root.resizable(0, 0)
 root.title("MXSkinNamer")
 
 dynosList = {"Honda (450f)": "crf450v2017", "Husqvarna (450f)": "fc450v2016",
-             "Kawasaki (450f)": "kx450fv2016", "KTM (450f)": "450sxfv2016", "Suzuki (450f)": "rmz450v2018", "Yamaha (450f)": "yz450fv2014", "KTM (350f)": "350sxfv2016", "Honda (250f)": "crf250v2018", "Husqvarna (250f)": "fc250v2016", "Kawasaki (250f)": "kx250fv2017", "KTM (250f)": "250sxfv2016", "Suzuki (250f)": "rmz250v2010", "Yamaha (250f)": "yz250fv2014", "Honda (125)": "cr125", "Kawasaki (125)": "kx125", "KTM (125)": "125sx", "Yamaha (125)": "yz125", "Suzuki (125)": "rm125", "Rider Body": "rider_body", "Helmet": "rider_head", "Wheels": "wheels"}
+             "Kawasaki (450f)": "kx450fv2016", "KTM (450f)": "450sxfv2016", "Suzuki (450f)": "rmz450v2018", "Yamaha (450f)": "yz450fv2014", "KTM (350f)": "350sxfv2016", "Honda (250f)": "crf250v2018", "Husqvarna (250f)": "fc250v2016", "Kawasaki (250f)": "kx250fv2017", "KTM (250f)": "250sxfv2016", "Suzuki (250f)": "rmz250v2010", "Yamaha (250f)": "yz250fv2014", "Honda (250t)": "cr250", "Kawasaki (250t)": "kx250", "KTM (250t)": "250sx", "Suzuki (250t)": "rm250", "Yamaha (250t)": "yz250", "Honda (125)": "cr125", "Kawasaki (125)": "kx125", "KTM (125)": "125sx", "Yamaha (125)": "yz125", "Suzuki (125)": "rm125", "Rider Body": "rider_body", "Helmet": "rider_head", "Wheels": "wheels"}
 jmParts = {"fork_lower", "fork_upper", "frame", "swingarm",
            "side_plates", "front_plate", "rider_body", "rider_head", "wheels"}
 
@@ -213,7 +213,6 @@ def rename_jm_files():
 
     # Get paths for new JMs
     newPaths = create_directory(root.directory, modelNameEntry.get())
-    print(newPaths)
     # Copy jms to new directory
     copy_jms_to_directory(newPaths[2])
     # Rename all of the JMs
@@ -225,7 +224,6 @@ def copy_maps_to_directory(directory):
     for item in skinsListbox.get(0, END):
         copy = shutil.copyfile(
             f"{root.directory}/{item}", f"{directory}/{item}")
-        print(copy)
 
 
 def copy_jms_to_directory(directory):
@@ -264,7 +262,6 @@ def rename_map(directory, map, special):
 
 
 def rename_jm(directory, jm):
-    print(f"save dir: {directory}, jm name: {jm}")
     # Get the selected dyno
     dynoSelection = dynoListbox.selection_get()
     dynoValue = None
