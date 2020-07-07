@@ -61,16 +61,27 @@ def clear_listbox(listbox):
 
 def delete_item_skin_lb():
     if skinsListbox.get(0):
-        print(f"Deleting: {skinsListbox.selection_get()}")
-        skinsListbox.delete(skinsListbox.curselection())
+        selection = skinsListbox.curselection()
+        selectionList = []
+        for i in selection:
+            selectionList.append(skinsListbox.get(i))
+        for i in selection[::-1]:
+            skinsListbox.delete(i)
+        print(
+            f"Removing {selectionList} from available skins and maps...")
     else:
         print("Skins listbox was empty...")
 
 
 def delete_item_jm_lb():
     if jmListbox.get(0):
-        print(f"Removing: {jmListbox.selection_get()}")
-        jmListbox.delete(jmListbox.curselection())
+        selection = jmListbox.curselection()
+        selectionList = []
+        for i in selection:
+            selectionList.append(jmListbox.get(i))
+        for i in selection[::-1]:
+            jmListbox.delete(i)
+        print(f"Removing {selectionList} from available JMs...")
     else:
         print("JMs listbox was empty...")
 
@@ -319,13 +330,15 @@ renameJMsButton = Button(root, text="Rename JMs", command=rename_jm_files)
 skinsCategoryLabel = Label(
     root, text="Skins and Maps", font="TkDefaultFont 16 bold")
 skinsLbScrollbar = Scrollbar(root)
-skinsListbox = Listbox(root, yscrollcommand=skinsLbScrollbar.set)
+skinsListbox = Listbox(root, selectmode=EXTENDED,
+                       yscrollcommand=skinsLbScrollbar.set)
 skinsDeleteButton = Button(root, text="-", command=delete_item_skin_lb)
 # JM category elements
 jmCategoryLabel = Label(
     root, text="JMs", font="TkDefaultFont 16 bold")
 jmLbScrollbar = Scrollbar(root)
-jmListbox = Listbox(root, yscrollcommand=jmLbScrollbar.set)
+jmListbox = Listbox(root, selectmode=EXTENDED,
+                    yscrollcommand=jmLbScrollbar.set)
 jmsDeleteButton = Button(root, text="-", command=delete_item_jm_lb)
 # Dyno rename category
 dynoCategoryLabel = Label(
