@@ -7,7 +7,7 @@ from os.path import isfile, join, splitext
 import shutil
 
 root = Tk()
-root.minsize(640, 480)
+root.minsize(640, 640)
 root.resizable(0, 0)
 root.title("MXSkinNamer")
 
@@ -312,69 +312,78 @@ def rename_jm(directory, jm):
                 os.rename(f"{saveDir}/{jm}", f"{saveDir}/{filename}")
 
 
-# General elements
-workingDirectoryLabel = Label(
-    root, text="Working Directory", font="TkDefaultFont 16 bold")
-currentWorkingDirectoryLabel = Label(
-    root, text=" no working directory", font="TkDefaultFont 8 bold")
-openDirectoryButton = Button(
-    root, text="Browse", command=open_directory_browser)
-modelNameLabel = Label(root, text="Model Name", font="TkDefaultFont 16 bold")
-modelNameEntry = Entry(root)
-renameLabel = Label(root, text="Rename", font="TkDefaultFont 16 bold")
-renameAllButton = Button(root, text="Rename All", command=rename_all_files)
-renameMapsButton = Button(root, text="Rename Maps", command=rename_map_files)
-renameJMsButton = Button(root, text="Rename JMs", command=rename_jm_files)
+# Run the TK setup and loop
+if __name__ == "__main__": # TODO: put the initialization code into a function
+    # General elements
+    workingDirectoryLabel = Label(
+        root, text="Working Directory", font="TkDefaultFont 16 bold")
+    currentWorkingDirectoryLabel = Label(
+        root, text=" no working directory", font="TkDefaultFont 8 bold")
+    openDirectoryButton = Button(
+        root, text="Browse", command=open_directory_browser)
+    modelNameLabel = Label(root, text="Model Name", font="TkDefaultFont 16 bold")
+    modelNameEntry = Entry(root)
+    renameLabel = Label(root, text="Rename", font="TkDefaultFont 16 bold")
+    renameAllButton = Button(root, text="Rename All", command=rename_all_files)
+    renameMapsButton = Button(root, text="Rename Maps", command=rename_map_files)
+    renameJMsButton = Button(root, text="Rename JMs", command=rename_jm_files)
+    safLabel = Label(root, text="SAF", font="TKDefaultFont 16 bold")
+    scramLabel = Label(root, text="SCRAM", font="TKDefaultFont 16 bold")
 
-# Skins category elements
-skinsCategoryLabel = Label(
-    root, text="Skins and Maps", font="TkDefaultFont 16 bold")
-skinsLbScrollbar = Scrollbar(root)
-skinsListbox = Listbox(root, selectmode=EXTENDED,
-                       yscrollcommand=skinsLbScrollbar.set)
-skinsDeleteButton = Button(root, text="-", command=delete_item_skin_lb)
-# JM category elements
-jmCategoryLabel = Label(
-    root, text="JMs", font="TkDefaultFont 16 bold")
-jmLbScrollbar = Scrollbar(root)
-jmListbox = Listbox(root, selectmode=EXTENDED,
-                    yscrollcommand=jmLbScrollbar.set)
-jmsDeleteButton = Button(root, text="-", command=delete_item_jm_lb)
-# Dyno rename category
-dynoCategoryLabel = Label(
-    root, text="Dyno", font="TkDefaultFont 16 bold")
-dynoLbScrollbar = Scrollbar(root)
-dynoListbox = Listbox(root, yscrollcommand=dynoLbScrollbar.set)
+    # Skins category elements
+    skinsCategoryLabel = Label(
+        root, text="Skins and Maps", font="TkDefaultFont 16 bold")
+    skinsLbScrollbar = Scrollbar(root)
+    skinsListbox = Listbox(root, selectmode=EXTENDED,
+                        yscrollcommand=skinsLbScrollbar.set)
+    skinsDeleteButton = Button(root, text="-", command=delete_item_skin_lb)
+    # JM category elements
+    jmCategoryLabel = Label(
+        root, text="JMs", font="TkDefaultFont 16 bold")
+    jmLbScrollbar = Scrollbar(root)
+    jmListbox = Listbox(root, selectmode=EXTENDED,
+                        yscrollcommand=jmLbScrollbar.set)
+    jmsDeleteButton = Button(root, text="-", command=delete_item_jm_lb)
+    # Dyno rename category
+    dynoCategoryLabel = Label(
+        root, text="Dyno", font="TkDefaultFont 16 bold")
+    dynoLbScrollbar = Scrollbar(root)
+    dynoListbox = Listbox(root, yscrollcommand=dynoLbScrollbar.set)
 
-# Place elements into the root
-workingDirectoryLabel.place(x=20, y=10, width=250, height=30)
-currentWorkingDirectoryLabel.place(x=62.5, y=40, width=160, height=30)
-openDirectoryButton.place(x=62.5, y=70, width=160, height=30)
-modelNameLabel.place(x=20, y=160, width=250, height=30)
-modelNameEntry.place(x=62.5, y=200, width=160, height=30)
-renameLabel.place(x=20, y=290, width=250, height=30)
-renameAllButton.place(x=62.5, y=330, width=160, height=30)
-renameMapsButton.place(x=62.5, y=370, width=160, height=30)
-renameJMsButton.place(x=62.5, y=410, width=160, height=30)
+    # Place elements into the root
+    workingDirectoryLabel.place(x=20, y=10, width=250, height=30)
+    currentWorkingDirectoryLabel.place(x=62.5, y=40, width=160, height=30)
+    openDirectoryButton.place(x=62.5, y=70, width=160, height=30)
+    modelNameLabel.place(x=20, y=160, width=250, height=30)
+    modelNameEntry.place(x=62.5, y=200, width=160, height=30)
+    renameLabel.place(x=20, y=290, width=250, height=30)
+    renameAllButton.place(x=62.5, y=330, width=160, height=30)
+    renameMapsButton.place(x=62.5, y=370, width=160, height=30)
+    renameJMsButton.place(x=62.5, y=410, width=160, height=30)
+    safLabel.place(x=62.5, y=470, width=160, height=30)
 
-skinsCategoryLabel.place(x=320, y=10, width=250, height=30)
-skinsLbScrollbar.place(x=570, y=40, width=15, height=100)
-skinsListbox.place(x=320, y=40, width=250, height=100)
-skinsDeleteButton.place(x=550, y=140, width=20, height=20)
+    skinsCategoryLabel.place(x=320, y=10, width=250, height=30)
+    skinsLbScrollbar.place(x=570, y=40, width=15, height=100)
+    skinsListbox.place(x=320, y=40, width=250, height=100)
+    skinsDeleteButton.place(x=550, y=140, width=20, height=20)
 
-jmCategoryLabel.place(x=320, y=160, width=250, height=30)
-jmLbScrollbar.place(x=570, y=200, width=15, height=100)
-jmListbox.place(x=320, y=200, width=250, height=100)
-jmsDeleteButton.place(x=550, y=300, width=20, height=20)
+    jmCategoryLabel.place(x=320, y=160, width=250, height=30)
+    jmLbScrollbar.place(x=570, y=200, width=15, height=100)
+    jmListbox.place(x=320, y=200, width=250, height=100)
+    jmsDeleteButton.place(x=550, y=300, width=20, height=20)
 
-dynoCategoryLabel.place(x=320, y=320, width=250, height=30)
-dynoLbScrollbar.place(x=570, y=350, width=15, height=100)
-dynoListbox.place(x=320, y=350, width=250, height=100)
-# Configure scrollbars
-skinsLbScrollbar.config(command=skinsListbox.yview)
-jmLbScrollbar.config(command=jmListbox.yview)
-dynoLbScrollbar.config(command=dynoListbox.yview)
-# Populate dynos list box
-populate_listbox(dynoListbox, dynosList.keys())
-# Run the main loop
-root.mainloop()
+    dynoCategoryLabel.place(x=320, y=320, width=250, height=30)
+    dynoLbScrollbar.place(x=570, y=350, width=15, height=100)
+    dynoListbox.place(x=320, y=350, width=250, height=100)
+
+    scramLabel.place(x=320, y=470, width=250, height=30)
+
+    # Configure scrollbars
+    skinsLbScrollbar.config(command=skinsListbox.yview)
+    jmLbScrollbar.config(command=jmListbox.yview)
+    dynoLbScrollbar.config(command=dynoListbox.yview)
+    # Populate dynos list box
+    populate_listbox(dynoListbox, dynosList.keys())
+
+    # Run the main loop
+    root.mainloop()
