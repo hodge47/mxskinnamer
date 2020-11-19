@@ -2,6 +2,8 @@
 
 import os, sys, shutil
 
+os.system("echo %cd%")
+
 class arginfo:
 	def __init__(self):
 		self.filenames = []
@@ -20,23 +22,25 @@ def bundle(src, dst):
 	for fn in src:
 		if os.path.isfile(fn):
 			filelist.append((os.path.getsize(fn), fn))
+			print(fn)
 		else:
-			os.path.walk(fn, visit, filelist)
+			os.walk(fn, visit, filelist)
 
-	dfp = file(dst, "wb")
+	dfp = open(dst, "wb")
 
 	if not dfp:
 		raise "Can't open output file %s" % (dst)
 
 	for f in filelist:
 		(sz, fn) = f
-		dfp.write("%d %s\n" % (sz, fn.replace("\\", "/")))
+		fn = fn.replace("\\", "/")
+		dfp.write(f"{sz} {fn}\n".encode())
 
-	dfp.write("-\n")
+	dfp.write("-\n".encode())
 
 	for f in filelist:
 		(sz, fn) = f
-		sfp = file(fn, "rb")
+		sfp = open(fn, "rb")
 		if not sfp:
 			raise "Can't open input file %s" % (fn)
 		shutil.copyfileobj(sfp, dfp)

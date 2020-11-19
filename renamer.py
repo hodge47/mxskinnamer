@@ -1,15 +1,15 @@
 from tkinter import *
 from tkinter import filedialog, simpledialog, messagebox
-import os
+import os, shutil, subprocess
 from os import listdir
 from os import path
 from os.path import isfile, join, splitext
-import shutil
 
 root = Tk()
 root.minsize(640, 640)
 root.resizable(0, 0)
 root.title("MXSkinNamer")
+root.directory = None
 
 dynosList = {"Honda (450f)": "crf450v2017", "Husqvarna (450f)": "fc450v2016",
              "Kawasaki (450f)": "kx450fv2016", "KTM (450f)": "450sxfv2016", "Suzuki (450f)": "rmz450v2018", "Yamaha (450f)": "yz450fv2014", "KTM (350f)": "350sxfv2016", "Honda (250f)": "crf250v2018", "Husqvarna (250f)": "fc250v2016", "Kawasaki (250f)": "kx250fv2017", "KTM (250f)": "250sxfv2016", "Suzuki (250f)": "rmz250v2010", "Yamaha (250f)": "yz250fv2014", "Honda (250t)": "cr250", "Kawasaki (250t)": "kx250", "KTM (250t)": "250sx", "Suzuki (250t)": "rm250", "Yamaha (250t)": "yz250", "Honda (125)": "cr125", "Kawasaki (125)": "kx125", "KTM (125)": "125sx", "Yamaha (125)": "yz125", "Suzuki (125)": "rm125", "Rider Body": "rider_body", "Helmet": "rider_head", "Wheels": "wheels"}
@@ -151,7 +151,7 @@ def rename_all_files():
         print("You need to choose a directory that has skins or jms...")
         return
     # Check to see if the model name entry is blank
-    if modelNameEntry.get() == "":
+    if modelNameEntry.get().lower() == "":
         print("You need to supply a model name...")
         return
     # Check to see if a dyno is selected
@@ -172,7 +172,7 @@ def rename_map_files():
         print("You need to choose a directory that has skins...")
         return
     # Check to see if the model name entry is blank
-    if modelNameEntry.get() == "":
+    if modelNameEntry.get().lower() == "":
         print("You need to supply a model name...")
         return
     # Check to see if a dyno is selected
@@ -190,7 +190,7 @@ def rename_map_files():
     diffuseMaps = sortedMaps[2]
 
     # Create a place to store the maps
-    newPaths = create_directory(root.directory, modelNameEntry.get())
+    newPaths = create_directory(root.directory, modelNameEntry.get().lower())
 
     # Create new maps and JMs
     copy_maps_to_directory(newPaths[1])
@@ -214,7 +214,7 @@ def rename_jm_files():
         print("You need to choose a directory that has jms...")
         return
     # Check to see if the model name entry is blank
-    if modelNameEntry.get() == "":
+    if modelNameEntry.get().lower() == "":
         print("You need to supply a model name...")
         return
     # Check to see if a dyno is selected
@@ -223,7 +223,7 @@ def rename_jm_files():
         return
 
     # Get paths for new JMs
-    newPaths = create_directory(root.directory, modelNameEntry.get())
+    newPaths = create_directory(root.directory, modelNameEntry.get().lower())
     # Copy jms to new directory
     copy_jms_to_directory(newPaths[2])
     # Rename all of the JMs
@@ -241,6 +241,11 @@ def copy_jms_to_directory(directory):
     for item in jmListbox.get(0, END):
         shutil.copyfile(f"{root.directory}/{item}", f"{directory}/{item}")
 
+def copy_files_to_directory(currentDirectory, copyToDirectory):
+    for f in listdir(currentDirectory):
+        filepath = join(currentDirectory + "/" + f)
+        if isfile(filepath):
+            shutil.copyfile(f"{currentDirectory}/{f}", f"{copyToDirectory}/{f}")
 
 def rename_map(directory, map, special):
     # Check to see if map halfway named
@@ -261,16 +266,28 @@ def rename_map(directory, map, special):
         if dynoSelection == item:
             dynoValue = dynosList[dynoSelection]
     # TODO: Check map type to copy and rename
+    output = None
     if special == "norm":
-        os.rename(f"{directory}/{map}",
-                  f"{directory}/{dynoValue}-{modelNameEntry.get()}_norm.png")
+        output = f"{directory}/{dynoValue}-{modelNameEntry.get().lower()}_norm.png"
+        try:
+            os.rename(f"{directory}/{map}", output)
+        except OSError as e:
+            os.remove(output)
+            os.rename(f"{directory}/{map}", output)
     elif special == "spec":
-        os.rename(f"{directory}/{map}",
-                  f"{directory}/{dynoValue}-{modelNameEntry.get()}_spec.png")
+        output = f"{directory}/{dynoValue}-{modelNameEntry.get().lower()}_spec.png"
+        try:
+            os.rename(f"{directory}/{map}", output)
+        except OSError as e:
+            os.remove(output)
+            os.rename(f"{directory}/{map}", output)
     else:
-        os.rename(f"{directory}/{map}",
-                  f"{directory}/{dynoValue}-{modelNameEntry.get()}-{filename}")
-
+        output = f"{directory}/{dynoValue}-{modelNameEntry.get().lower()}-{filename}"
+        try:
+            os.rename(f"{directory}/{map}", output)
+        except OSError as e:
+            os.remove(output)
+            os.rename(f"{directory}/{map}", output)
 
 def rename_jm(directory, jm):
     # Get the selected dyno
@@ -286,9 +303,9 @@ def rename_jm(directory, jm):
             saveDir = f"{directory}"
             filename = None
             if "front_wheel" in jm.lower():
-                filename = f"front_wheel-{modelNameEntry.get()}.jm"
+                filename = f"front_wheel-{modelNameEntry.get().lower()}.jm"
             elif "rear_wheel" in jm.lower():
-                filename = f"rear_wheel-{modelNameEntry.get()}.jm"
+                filename = f"rear_wheel-{modelNameEntry.get().lower()}.jm"
             else:
                 continue
             # See if file exists - need to delete if so or error on windows, MacOS and Linux OK
@@ -301,16 +318,106 @@ def rename_jm(directory, jm):
             if type.lower() in jm.lower():
                 jmType = type
                 saveDir = f"{directory}"
-                filename = f"{dynoValue}_{jmType}-{modelNameEntry.get()}.jm"
+                filename = f"{dynoValue}_{jmType}-{modelNameEntry.get().lower()}.jm"
                 # Change file name to only dyno and model name if rider or wheels
                 if jmType.lower() == "rider_body" or jmType.lower() == "rider_head":
-                    filename = f"{dynoValue}-{modelNameEntry.get()}.jm"
+                    filename = f"{dynoValue}-{modelNameEntry.get().lower()}.jm"
                 # See if file exists - need to delete if so or error on windows, MacOS and Linux OK
                 if os.path.exists(f"{saveDir}/{filename}"):
                     os.remove(f"{saveDir}/{filename}")
                 # Rename the jm file
                 os.rename(f"{saveDir}/{jm}", f"{saveDir}/{filename}")
 
+
+def run_saf_files():
+    # Change into working directory just to be safe
+    os.chdir(workingDirectory)
+    # Check to see if the model name is empty
+    if modelNameEntry.get().lower() == "":
+        print("SAF Files: You need to supply a model name to saf your files...")
+        return
+    else:
+        # Check to see if there is a root directory
+        if root.directory == None:
+            print("SAF Files: You need to supply a diredctory...")
+            return
+        else:
+            # Make TEMP folder in plugins
+            if not path.exists("plugins/TEMP"):
+                os.makedirs("plugins/TEMP")
+                print("SAF Files: Created temp export directory...")
+            # Copy all necessary files to the temp folder
+            renamedFilesDirectory = f"{root.directory}/RenamedFiles"
+            subDirs = os.listdir(renamedFilesDirectory)
+            modelDir = None
+            # Get all the sub-directories and set modelDir if one matches the modelEntry
+            for dir in subDirs:
+                if dir.lower() == modelNameEntry.get().lower():
+                    modelDir = f"{renamedFilesDirectory}/{dir}"
+
+            if modelDir == None:
+                print("[SAF Files]: Your model name does not match any existing directories...")
+                return
+            else:
+                # Copy maps to export folder
+                if not path.exists(f"{modelDir}/Maps"):
+                    print(f"[SAF Files]: No map files were found...")
+                else:
+                    copy_files_to_directory(f"{modelDir}/Maps", "plugins/TEMP")  # Map files
+                # Copy JMs to export folder
+                if not path.exists(f"{modelDir}/JM"):
+                    print(f"[SAF Files]: No JM files were found...")
+                else:
+                    copy_files_to_directory(f"{modelDir}/JM", "plugins/TEMP")  # JM files
+                # Copy all file names to a string to run in saf.py
+                args = []
+                # Add args to args list
+                args.append('python')
+                args.append('saf.py')
+                files = os.listdir(f"plugins/TEMP")
+                for f in files:
+                    if not f == f"{modelNameEntry.get().lower()}.saf" and not f == "saf.py":
+                        args.append(f"{f}")  # \s was not working so make sure the space stays
+                # Add saf name to args list
+                args.append(f"{modelNameEntry.get().lower()}.saf")
+
+                fullCommand = ""
+                for f in args:
+                    fullCommand += f"{f} "
+                print(fullCommand)
+
+                # Copy the saf script to the Export folder
+                if not path.exists("plugins/TEMP/saf.py"):
+                    shutil.copyfile(f"plugins/saf.py", f"plugins/TEMP/saf.py")
+
+                # Change into the plugins/TEMP directory
+                os.chdir("plugins/TEMP")
+                #TODO:  SAF the files
+                safName = f"{modelNameEntry.get().lower()}.saf"
+                safCreationCommand = subprocess.Popen(args, shell=True)
+                # Move the saf file back to the renamed files directory
+                safFilePath = f"{root.directory}/RenamedFiles/{modelNameEntry.get().lower()}/Saf"
+                if not path.exists(safFilePath):
+                    os.makedirs(safFilePath)
+                shutil.copyfile(f"{safName}", f"{safFilePath}/{safName}")
+                # Change back into the working directory
+                os.chdir(workingDirectory)
+                # Clean up the temp directory
+                #clean_temp_folders()
+
+
+def clean_temp_folders():
+    try:
+        if path.exists("plugins/TEMP"):
+            shutil.rmtree("plugins/TEMP")
+    except OSError as e:
+        print("[Clean TEMP Directory]: Could not remove TEMP directory...")
+
+def on_window_close():
+    # Clean up the TEMP folders
+    clean_temp_folders()
+    # Destory the root window
+    root.destroy();
 
 # Run the TK setup and loop
 if __name__ == "__main__": # TODO: put the initialization code into a function
@@ -329,6 +436,7 @@ if __name__ == "__main__": # TODO: put the initialization code into a function
     renameJMsButton = Button(root, text="Rename JMs", command=rename_jm_files)
     safLabel = Label(root, text="SAF", font="TKDefaultFont 16 bold")
     scramLabel = Label(root, text="SCRAM", font="TKDefaultFont 16 bold")
+    safButton = Button(root, text="SAF Files", command=run_saf_files)
 
     # Skins category elements
     skinsCategoryLabel = Label(
@@ -361,6 +469,7 @@ if __name__ == "__main__": # TODO: put the initialization code into a function
     renameMapsButton.place(x=62.5, y=370, width=160, height=30)
     renameJMsButton.place(x=62.5, y=410, width=160, height=30)
     safLabel.place(x=62.5, y=470, width=160, height=30)
+    safButton.place(x=62.5, y=510, width=160, height=30)
 
     skinsCategoryLabel.place(x=320, y=10, width=250, height=30)
     skinsLbScrollbar.place(x=570, y=40, width=15, height=100)
@@ -385,5 +494,10 @@ if __name__ == "__main__": # TODO: put the initialization code into a function
     # Populate dynos list box
     populate_listbox(dynoListbox, dynosList.keys())
 
+    # Get the working directory
+    workingDirectory = os.getcwd()
+
+    # Window close protocol to clean up TEMP folder
+    root.protocol("WM_DELETE_WINDOW", on_window_close)
     # Run the main loop
     root.mainloop()
