@@ -328,8 +328,16 @@ def rename_jm(directory, jm):
                 # Rename the jm file
                 os.rename(f"{saveDir}/{jm}", f"{saveDir}/{filename}")
 
+def saf_all():
+    run_saf_files(0)
 
-def run_saf_files():
+def saf_maps():
+    run_saf_files(1)
+
+def saf_jms():
+    run_saf_files(2)
+
+def run_saf_files(typeIndex):
     # Change into working directory just to be safe
     os.chdir(workingDirectory)
     # Check to see if the model name is empty
@@ -360,15 +368,17 @@ def run_saf_files():
                 return
             else:
                 # Copy maps to export folder
-                if not path.exists(f"{modelDir}/Maps"):
-                    print(f"[SAF Files]: No map files were found...")
-                else:
-                    copy_files_to_directory(f"{modelDir}/Maps", "plugins/TEMP")  # Map files
+                if typeIndex == 0 or typeIndex == 1:
+                    if not path.exists(f"{modelDir}/Maps"):
+                        print(f"[SAF Files]: No map files were found...")
+                    else:
+                        copy_files_to_directory(f"{modelDir}/Maps", "plugins/TEMP")  # Map files
                 # Copy JMs to export folder
-                if not path.exists(f"{modelDir}/JM"):
-                    print(f"[SAF Files]: No JM files were found...")
-                else:
-                    copy_files_to_directory(f"{modelDir}/JM", "plugins/TEMP")  # JM files
+                if typeIndex == 0 or typeIndex == 2:
+                    if not path.exists(f"{modelDir}/JM"):
+                        print(f"[SAF Files]: No JM files were found...")
+                    else:
+                        copy_files_to_directory(f"{modelDir}/JM", "plugins/TEMP")  # JM files
                 # Copy all file names to a string to run in saf.py
                 args = []
                 # Add args to args list
@@ -377,14 +387,20 @@ def run_saf_files():
                 files = os.listdir(f"plugins/TEMP")
                 for f in files:
                     if not f == f"{modelNameEntry.get().lower()}.saf" and not f == "saf.py":
-                        args.append(f"{f}")  # \s was not working so make sure the space stays
+                        # Check file extension
+                        ext = splitext(f)
+                        if ext[1] == ".png" or ext[1] == ".jm" or ext[1] == ".scram":
+                            args.append(f"{f}")  # \s was not working so make sure the space stays
                 # Add saf name to args list
                 args.append(f"{modelNameEntry.get().lower()}.saf")
+
+                if len(args) == 3:
+                    print("[SAF Files]: It looks like no files were added to the args for the saf subprocess. Exiting function...")
+                    return
 
                 fullCommand = ""
                 for f in args:
                     fullCommand += f"{f} "
-                print(fullCommand)
 
                 # Copy the saf script to the Export folder
                 if not path.exists("plugins/TEMP/saf.py"):
@@ -394,7 +410,7 @@ def run_saf_files():
                 os.chdir("plugins/TEMP")
                 #TODO:  SAF the files
                 safName = f"{modelNameEntry.get().lower()}.saf"
-                safCreationCommand = subprocess.Popen(args, shell=True)
+                safCreationCommand = subprocess.Popen(args, shell=True).wait()
                 # Move the saf file back to the renamed files directory
                 safFilePath = f"{root.directory}/RenamedFiles/{modelNameEntry.get().lower()}/Saf"
                 if not path.exists(safFilePath):
@@ -403,7 +419,7 @@ def run_saf_files():
                 # Change back into the working directory
                 os.chdir(workingDirectory)
                 # Clean up the temp directory
-                #clean_temp_folders()
+                clean_temp_folders()
 
 
 def clean_temp_folders():
@@ -436,7 +452,9 @@ if __name__ == "__main__": # TODO: put the initialization code into a function
     renameJMsButton = Button(root, text="Rename JMs", command=rename_jm_files)
     safLabel = Label(root, text="SAF", font="TKDefaultFont 16 bold")
     scramLabel = Label(root, text="SCRAM", font="TKDefaultFont 16 bold")
-    safButton = Button(root, text="SAF Files", command=run_saf_files)
+    safAllButton = Button(root, text="Saf All", command=saf_all)
+    safMapsButton = Button(root, text="Saf Maps", command=saf_maps)
+    safJmsButton = Button(root, text="Saf JMs", command=saf_jms)
 
     # Skins category elements
     skinsCategoryLabel = Label(
@@ -469,7 +487,9 @@ if __name__ == "__main__": # TODO: put the initialization code into a function
     renameMapsButton.place(x=62.5, y=370, width=160, height=30)
     renameJMsButton.place(x=62.5, y=410, width=160, height=30)
     safLabel.place(x=62.5, y=470, width=160, height=30)
-    safButton.place(x=62.5, y=510, width=160, height=30)
+    safAllButton.place(x=62.5, y=510, width=160, height=30)
+    safMapsButton.place(x=62.5, y=550, width=160, height=30)
+    safJmsButton.place(x=62.5, y=590, width=160, height=30)
 
     skinsCategoryLabel.place(x=320, y=10, width=250, height=30)
     skinsLbScrollbar.place(x=570, y=40, width=15, height=100)

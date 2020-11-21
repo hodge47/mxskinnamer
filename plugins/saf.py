@@ -22,7 +22,6 @@ def bundle(src, dst):
 	for fn in src:
 		if os.path.isfile(fn):
 			filelist.append((os.path.getsize(fn), fn))
-			print(fn)
 		else:
 			os.walk(fn, visit, filelist)
 
