@@ -4,6 +4,7 @@ import os, shutil, subprocess
 from os import listdir
 from os import path
 from os.path import isfile, join, splitext
+import platform
 
 root = Tk()
 root.minsize(640, 640)
@@ -12,7 +13,13 @@ root.title("MXSkinNamer")
 root.directory = None
 
 dynosList = {"Honda (450f)": "crf450v2017", "Husqvarna (450f)": "fc450v2016",
-             "Kawasaki (450f)": "kx450fv2016", "KTM (450f)": "450sxfv2016", "Suzuki (450f)": "rmz450v2018", "Yamaha (450f)": "yz450fv2014", "KTM (350f)": "350sxfv2016", "Honda (250f)": "crf250v2018", "Husqvarna (250f)": "fc250v2016", "Kawasaki (250f)": "kx250fv2017", "KTM (250f)": "250sxfv2016", "Suzuki (250f)": "rmz250v2010", "Yamaha (250f)": "yz250fv2014", "Honda (250t)": "cr250", "Kawasaki (250t)": "kx250", "KTM (250t)": "250sx", "Suzuki (250t)": "rm250", "Yamaha (250t)": "yz250", "Honda (125)": "cr125", "Kawasaki (125)": "kx125", "KTM (125)": "125sx", "Yamaha (125)": "yz125", "Suzuki (125)": "rm125", "Rider Body": "rider_body", "Helmet": "rider_head", "Wheels": "wheels"}
+             "Kawasaki (450f)": "kx450fv2016", "KTM (450f)": "450sxfv2016", "Suzuki (450f)": "rmz450v2018",
+             "Yamaha (450f)": "yz450fv2014", "KTM (350f)": "350sxfv2016", "Honda (250f)": "crf250v2018",
+             "Husqvarna (250f)": "fc250v2016", "Kawasaki (250f)": "kx250fv2017", "KTM (250f)": "250sxfv2016",
+             "Suzuki (250f)": "rmz250v2010", "Yamaha (250f)": "yz250fv2014", "Honda (250t)": "cr250",
+             "Kawasaki (250t)": "kx250", "KTM (250t)": "250sx", "Suzuki (250t)": "rm250", "Yamaha (250t)": "yz250",
+             "Honda (125)": "cr125", "Kawasaki (125)": "kx125", "KTM (125)": "125sx", "Yamaha (125)": "yz125",
+             "Suzuki (125)": "rm125", "Rider Body": "rider_body", "Helmet": "rider_head", "Wheels": "wheels"}
 jmParts = {"fork_lower", "fork_upper", "frame", "swingarm",
            "side_plates", "front_plate", "rider_body", "rider_head", "wheels"}
 
@@ -67,8 +74,7 @@ def delete_item_skin_lb():
             selectionList.append(skinsListbox.get(i))
         for i in selection[::-1]:
             skinsListbox.delete(i)
-        print(
-            f"Removing {selectionList} from available skins and maps...")
+        print(f"Removing {selectionList} from available skins and maps...")
     else:
         print("Skins listbox was empty...")
 
@@ -96,7 +102,6 @@ def create_directory(directory, modelName):
     jmDirExists = path.exists(jmDir)
 
     if rootDirExists and mapsDirExists and jmDirExists:
-        print("Save path already exists. This is OK")
         return (rootDir, mapsDir, jmDir)
     else:
         if not rootDirExists:
@@ -241,11 +246,13 @@ def copy_jms_to_directory(directory):
     for item in jmListbox.get(0, END):
         shutil.copyfile(f"{root.directory}/{item}", f"{directory}/{item}")
 
+
 def copy_files_to_directory(currentDirectory, copyToDirectory):
     for f in listdir(currentDirectory):
         filepath = join(currentDirectory + "/" + f)
         if isfile(filepath):
             shutil.copyfile(f"{currentDirectory}/{f}", f"{copyToDirectory}/{f}")
+
 
 def rename_map(directory, map, special):
     # Check to see if map halfway named
@@ -289,6 +296,7 @@ def rename_map(directory, map, special):
             os.remove(output)
             os.rename(f"{directory}/{map}", output)
 
+
 def rename_jm(directory, jm):
     # Get the selected dyno
     dynoSelection = dynoListbox.selection_get()
@@ -328,14 +336,18 @@ def rename_jm(directory, jm):
                 # Rename the jm file
                 os.rename(f"{saveDir}/{jm}", f"{saveDir}/{filename}")
 
+
 def saf_all():
     run_saf_files(0)
+
 
 def saf_maps():
     run_saf_files(1)
 
+
 def saf_jms():
     run_saf_files(2)
+
 
 def run_saf_files(typeIndex):
     # Change into working directory just to be safe
@@ -347,7 +359,7 @@ def run_saf_files(typeIndex):
     else:
         # Check to see if there is a root directory
         if root.directory == None:
-            print("SAF Files: You need to supply a diredctory...")
+            print("SAF Files: You need to supply a directory...")
             return
         else:
             # Make TEMP folder in plugins
@@ -395,7 +407,8 @@ def run_saf_files(typeIndex):
                 args.append(f"{modelNameEntry.get().lower()}.saf")
 
                 if len(args) == 3:
-                    print("[SAF Files]: It looks like no files were added to the args for the saf subprocess. Exiting function...")
+                    print(
+                        "[SAF Files]: It looks like no files were added to the args for the saf subprocess. Exiting function...")
                     return
 
                 fullCommand = ""
@@ -408,7 +421,7 @@ def run_saf_files(typeIndex):
 
                 # Change into the plugins/TEMP directory
                 os.chdir("plugins/TEMP")
-                #TODO:  SAF the files
+                # TODO:  SAF the files
                 safName = f"{modelNameEntry.get().lower()}.saf"
                 safCreationCommand = subprocess.Popen(args, shell=True).wait()
                 # Move the saf file back to the renamed files directory
@@ -422,6 +435,131 @@ def run_saf_files(typeIndex):
                 clean_temp_folders()
 
 
+def scram_all():
+    run_scram_files(0)
+
+
+def scram_maps():
+    run_scram_files(1)
+
+
+def scram_jms():
+    run_scram_files(2)
+
+
+def run_scram_files(typeIndex):
+    # Change into working directory just to be safe
+    os.chdir(workingDirectory)
+    # Check to see if the model name is empty
+    if modelNameEntry.get().lower() == "":
+        print("SCRAM Files: You need to supply a model name to scram your files...")
+        return
+    else:
+        # Check to see if there is a root directory
+        if root.directory == None:
+            print("SCRAM Files: You need to supply a directory...")
+            return
+        else:
+            # Make TEMP folder in plugins
+            if not path.exists("plugins/TEMP"):
+                os.makedirs("plugins/TEMP")
+                print("SCRAM Files: Created temp export directory...")
+            # Copy all necessary files to the temp folder
+            renamedFilesDirectory = f"{root.directory}/RenamedFiles"
+            subDirs = os.listdir(renamedFilesDirectory)
+            modelDir = None
+            # Get all the sub-directories and set modelDir if one matches the modelEntry
+            for dir in subDirs:
+                if dir.lower() == modelNameEntry.get().lower():
+                    modelDir = f"{renamedFilesDirectory}/{dir}"
+
+            if modelDir == None:
+                print("[SCRAM Files]: Your model name does not match any existing directories...")
+                return
+            else:
+                # Copy maps to export folder
+                if typeIndex == 0 or typeIndex == 1:
+                    if not path.exists(f"{modelDir}/Maps"):
+                        print(f"[SCRAM Files]: No map files were found...")
+                    else:
+                        copy_files_to_directory(f"{modelDir}/Maps", "plugins/TEMP")  # Map files
+                # Copy JMs to export folder
+                if typeIndex == 0 or typeIndex == 2:
+                    if not path.exists(f"{modelDir}/JM"):
+                        print(f"[SCRAM Files]: No JM files were found...")
+                    else:
+                        copy_files_to_directory(f"{modelDir}/JM", "plugins/TEMP")  # JM files
+                # Decide which platform binary to use
+                binaryName = ""
+                if platform == "Windows":
+                    binaryName = "mxscram.exe"
+                elif platform == "Linux":
+                    binaryName == "mxscram"
+                else:
+                    # return because we have no other binaries
+                    print(
+                        "[SCRAM]: There are no binaries that can be used on your system.\nScram only supports Windows and Linux...")
+                    return
+                # Get files in temp directory
+                files = os.listdir(f"plugins/TEMP")
+                # Return if no files
+                if len(files) == 0:
+                    print("[SCRAM]: There are no files to scram!")
+                    return
+                # Delete all files in the output directory
+                scramFileDirectory = f"{root.directory}/RenamedFiles/{modelNameEntry.get().lower()}/Scram"
+                for f in os.listdir(scramFileDirectory):
+                    os.remove(f"{scramFileDirectory}/{f}")
+                for f in files:
+                    if not f == f"{modelNameEntry.get().lower()}.saf":
+                        # Check file extension
+                        ext = splitext(f)
+                        if ext[1] == ".png" or ext[1] == ".jm":
+                            # Scram the file
+                            args = []
+                            # Append the binary name
+                            args.append(binaryName)
+                            # Append the file
+                            args.append(f)
+                            # Append the output flag
+                            args.append("-o")
+                            # Append the final scram file name
+                            args.append(f"{f}.scram")
+                            # Run the scram command
+                            scram_file(args)
+                # Change back into the working directory
+                os.chdir(workingDirectory)
+                # Clean up the temp directory
+                clean_temp_folders()
+
+                print("[SCRAM]: files were successfully scrammed!")
+
+def scram_file(args):
+    fullCommand = ""
+    for f in args:
+        fullCommand += f"{f} "
+
+    # Change into the plugins/TEMP directory
+    if not os.getcwd() == f"{workingDirectory}/plugins/TEMP":
+        os.chdir(f"{workingDirectory}/plugins/TEMP")
+
+    # Copy the scram binary to the Export folder
+    if not path.exists(f"{workingDirectory}/plugins/TEMP/{args[0]}"):
+        shutil.copyfile(f"{workingDirectory}/plugins/{args[0]}", f"{workingDirectory}/plugins/TEMP/{args[0]}")
+
+
+    # TODO:  SCRAM the files
+    scramName = f"{args[len(args) - 1]}"
+    safCreationCommand = subprocess.Popen(args, shell=True).wait()
+    # Move the saf file back to the renamed files directory
+    scramFilePath = f"{root.directory}/RenamedFiles/{modelNameEntry.get().lower()}/Scram"
+    if not path.exists(scramFilePath):
+        os.makedirs(scramFilePath)
+        print(f"[SCRAM]: Created scram directory for {modelNameEntry.get()}")
+    shutil.copyfile(f"{scramName}", f"{scramFilePath}/{scramName}")
+    # Change back into the working directory
+    os.chdir(workingDirectory)
+
 def clean_temp_folders():
     try:
         if path.exists("plugins/TEMP"):
@@ -429,14 +567,16 @@ def clean_temp_folders():
     except OSError as e:
         print("[Clean TEMP Directory]: Could not remove TEMP directory...")
 
+
 def on_window_close():
     # Clean up the TEMP folders
     clean_temp_folders()
     # Destory the root window
     root.destroy();
 
+
 # Run the TK setup and loop
-if __name__ == "__main__": # TODO: put the initialization code into a function
+if __name__ == "__main__":  # TODO: put the initialization code into a function
     # General elements
     workingDirectoryLabel = Label(
         root, text="Working Directory", font="TkDefaultFont 16 bold")
@@ -446,12 +586,19 @@ if __name__ == "__main__": # TODO: put the initialization code into a function
         root, text="Browse", command=open_directory_browser)
     modelNameLabel = Label(root, text="Model Name", font="TkDefaultFont 16 bold")
     modelNameEntry = Entry(root)
+
     renameLabel = Label(root, text="Rename", font="TkDefaultFont 16 bold")
     renameAllButton = Button(root, text="Rename All", command=rename_all_files)
     renameMapsButton = Button(root, text="Rename Maps", command=rename_map_files)
     renameJMsButton = Button(root, text="Rename JMs", command=rename_jm_files)
-    safLabel = Label(root, text="SAF", font="TKDefaultFont 16 bold")
-    scramLabel = Label(root, text="SCRAM", font="TKDefaultFont 16 bold")
+
+    scramLabel = Label(root, text="Scram", font="TKDefaultFont 16 bold")
+    scramNotAvailableLabel = Label(root, text="Scram not available on MacOS", font="TKDefaultFont 8 bold")
+    scramAllButton = Button(root, text="Scram All", command=scram_all)
+    scramMapsButton = Button(root, text="Scram Maps", command=scram_maps)
+    scramJmsButton = Button(root, text="Scram JMs", command=scram_jms)
+
+    safLabel = Label(root, text="Saf", font="TKDefaultFont 16 bold")
     safAllButton = Button(root, text="Saf All", command=saf_all)
     safMapsButton = Button(root, text="Saf Maps", command=saf_maps)
     safJmsButton = Button(root, text="Saf JMs", command=saf_jms)
@@ -461,7 +608,7 @@ if __name__ == "__main__": # TODO: put the initialization code into a function
         root, text="Skins and Maps", font="TkDefaultFont 16 bold")
     skinsLbScrollbar = Scrollbar(root)
     skinsListbox = Listbox(root, selectmode=EXTENDED,
-                        yscrollcommand=skinsLbScrollbar.set)
+                           yscrollcommand=skinsLbScrollbar.set)
     skinsDeleteButton = Button(root, text="-", command=delete_item_skin_lb)
     # JM category elements
     jmCategoryLabel = Label(
@@ -482,14 +629,26 @@ if __name__ == "__main__": # TODO: put the initialization code into a function
     openDirectoryButton.place(x=62.5, y=70, width=160, height=30)
     modelNameLabel.place(x=20, y=160, width=250, height=30)
     modelNameEntry.place(x=62.5, y=200, width=160, height=30)
+
     renameLabel.place(x=20, y=290, width=250, height=30)
     renameAllButton.place(x=62.5, y=330, width=160, height=30)
     renameMapsButton.place(x=62.5, y=370, width=160, height=30)
     renameJMsButton.place(x=62.5, y=410, width=160, height=30)
-    safLabel.place(x=62.5, y=470, width=160, height=30)
-    safAllButton.place(x=62.5, y=510, width=160, height=30)
-    safMapsButton.place(x=62.5, y=550, width=160, height=30)
-    safJmsButton.place(x=62.5, y=590, width=160, height=30)
+
+    scramLabel.place(x=20, y=470, width=250, height=30)
+    # Show scramNotAvailableLabel if platform is not windows or linux
+    platform = platform.system()
+    if platform != "Windows" and platform != "Linux":
+        scramNotAvailableLabel.place(x=20, y=550, width=250, height=30)
+    else:
+        scramAllButton.place(x=62.5, y=510, width=160, height=30)
+        scramMapsButton.place(x=62.5, y=550, width=160, height=30)
+        scramJmsButton.place(x=62.5, y=590, width=160, height=30)
+
+    safLabel.place(x=320, y=470, width=250, height=30)
+    safAllButton.place(x=360, y=510, width=160, height=30)
+    safMapsButton.place(x=360, y=550, width=160, height=30)
+    safJmsButton.place(x=360, y=590, width=160, height=30)
 
     skinsCategoryLabel.place(x=320, y=10, width=250, height=30)
     skinsLbScrollbar.place(x=570, y=40, width=15, height=100)
@@ -504,8 +663,6 @@ if __name__ == "__main__": # TODO: put the initialization code into a function
     dynoCategoryLabel.place(x=320, y=320, width=250, height=30)
     dynoLbScrollbar.place(x=570, y=350, width=15, height=100)
     dynoListbox.place(x=320, y=350, width=250, height=100)
-
-    scramLabel.place(x=320, y=470, width=250, height=30)
 
     # Configure scrollbars
     skinsLbScrollbar.config(command=skinsListbox.yview)
