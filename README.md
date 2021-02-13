@@ -38,3 +38,7 @@ You can either rename skins and JMs separately on their own or all together at o
    - __*Note: Skins/maps and JM files are now copied and then renamed to avoid a destructive workflow. Your files will be saved in your skins/jm directory under 'RenamedFiles/Model Name/Maps' or 'RenamedFiles/Model Name/JM'*__
 6. (Optional) Scram and saf your bike maps
 7. Move to your game install directory or personal folder
+
+### Dependencies Used
+Saf Creator - Josh Vanderhoof - (http://forum.mxsimulator.com/viewtopic.php?t=321)
+Scram Creator - Josh Vanderhoof - (http://forum.mxsimulator.com/viewtopic.php?f=1&t=25271)

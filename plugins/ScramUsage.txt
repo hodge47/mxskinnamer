@@ -1,0 +1,1 @@
+mxscram mykindofprotectedskin.png -o mykindofprotectedskin.png.scram
