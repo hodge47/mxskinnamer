@@ -1,5 +1,5 @@
 from tkinter import *
-from tkinter import filedialog, simpledialog, messagebox
+from tkinter import filedialog, messagebox
 import os, shutil, subprocess
 from os import listdir
 from os import path
@@ -247,11 +247,21 @@ def copy_jms_to_directory(directory):
         shutil.copyfile(f"{root.directory}/{item}", f"{directory}/{item}")
 
 
-def copy_files_to_directory(currentDirectory, copyToDirectory):
+def copy_files_to_directory(currentDirectory, copyToDirectory, fileExtensions = ""):
     for f in listdir(currentDirectory):
         filepath = join(currentDirectory + "/" + f)
         if isfile(filepath):
-            shutil.copyfile(f"{currentDirectory}/{f}", f"{copyToDirectory}/{f}")
+            if fileExtensions == "":
+                shutil.copyfile(f"{currentDirectory}/{f}", f"{copyToDirectory}/{f}")
+            else:
+                includedExtensions = 0
+                for ext in fileExtensions:
+                    if ext in filepath:
+                        includedExtensions += 1
+                if len(fileExtensions) > 1 and includedExtensions == 2:
+                    shutil.copyfile(f"{currentDirectory}/{f}", f"{copyToDirectory}/{f}")
+                elif len(fileExtensions) == 1:
+                    shutil.copyfile(f"{currentDirectory}/{f}", f"{copyToDirectory}/{f}")
 
 
 def rename_map(directory, map, special):
@@ -272,7 +282,6 @@ def rename_map(directory, map, special):
     for item in dynosList:
         if dynoSelection == item:
             dynoValue = dynosList[dynoSelection]
-    # TODO: Check map type to copy and rename
     output = None
     if special == "norm":
         output = f"{directory}/{dynoValue}-{modelNameEntry.get().lower()}_norm.png"
@@ -379,18 +388,15 @@ def run_saf_files(typeIndex):
                 print("[SAF Files]: Your model name does not match any existing directories...")
                 return
             else:
+                # Copy all to export folder
+                if typeIndex == 0:
+                    run_saf_all(modelDir)
                 # Copy maps to export folder
-                if typeIndex == 0 or typeIndex == 1:
-                    if not path.exists(f"{modelDir}/Maps"):
-                        print(f"[SAF Files]: No map files were found...")
-                    else:
-                        copy_files_to_directory(f"{modelDir}/Maps", "plugins/TEMP")  # Map files
+                if typeIndex == 1:
+                    run_saf_maps(modelDir)
                 # Copy JMs to export folder
-                if typeIndex == 0 or typeIndex == 2:
-                    if not path.exists(f"{modelDir}/JM"):
-                        print(f"[SAF Files]: No JM files were found...")
-                    else:
-                        copy_files_to_directory(f"{modelDir}/JM", "plugins/TEMP")  # JM files
+                if typeIndex == 2:
+                    run_saf_jms(modelDir)
                 # Copy all file names to a string to run in saf.py
                 args = []
                 # Add args to args list
@@ -401,14 +407,14 @@ def run_saf_files(typeIndex):
                     if not f == f"{modelNameEntry.get().lower()}.saf" and not f == "saf.py":
                         # Check file extension
                         ext = splitext(f)
+
                         if ext[1] == ".png" or ext[1] == ".jm" or ext[1] == ".scram":
                             args.append(f"{f}")  # \s was not working so make sure the space stays
                 # Add saf name to args list
                 args.append(f"{modelNameEntry.get().lower()}.saf")
 
                 if len(args) == 3:
-                    print(
-                        "[SAF Files]: It looks like no files were added to the args for the saf subprocess. Exiting function...")
+                    print("[SAF Files]: It looks like no files were added to the args for the saf subprocess. Exiting function...")
                     return
 
                 fullCommand = ""
@@ -421,7 +427,6 @@ def run_saf_files(typeIndex):
 
                 # Change into the plugins/TEMP directory
                 os.chdir("plugins/TEMP")
-                # TODO:  SAF the files
                 safName = f"{modelNameEntry.get().lower()}.saf"
                 safCreationCommand = subprocess.Popen(args, shell=True).wait()
                 # Move the saf file back to the renamed files directory
@@ -433,6 +438,43 @@ def run_saf_files(typeIndex):
                 os.chdir(workingDirectory)
                 # Clean up the temp directory
                 clean_temp_folders()
+
+
+def run_saf_all(modelDir):
+    if not path.exists(f"{modelDir}/Maps") or not path.exists(f"{modelDir}/JM"):
+        print(f"[SAF Files]: No map or JM files were found...")
+    else:
+        # Check for Scram folder
+        if not os.listdir(f"{modelDir}/Scram") == []:
+            if messagebox.askyesno("SCRAM files were detected!", "Would you like to use the SCRAM files instead?"):
+                copy_files_to_directory(f"{modelDir}/Scram", "plugins/TEMP", [".png", ".jm", ".scram"])
+            else:
+                copy_files_to_directory(f"{modelDir}/Maps", "plugins/TEMP")
+                copy_files_to_directory(f"{modelDir}/JM", "plugins/TEMP")
+
+
+def run_saf_maps(modelDir):
+    if not path.exists(f"{modelDir}/Maps"):
+        print(f"[SAF Files]: No map files were found...")
+    else:
+        # Check for Scram folder
+        if not os.listdir(f"{modelDir}/Scram") == []:
+            if messagebox.askyesno("SCRAM files were detected!", "Would you like to use the SCRAM files instead?"):
+                copy_files_to_directory(f"{modelDir}/Scram", "plugins/TEMP", [".png", ".scram"])
+            else:
+                copy_files_to_directory(f"{modelDir}/Maps", "plugins/TEMP")  # Map files
+
+
+def run_saf_jms(modelDir):
+    if not path.exists(f"{modelDir}/JM"):
+        print(f"[SAF Files]: No JM files were found...")
+    else:
+        # Check for Scram folder
+        if not os.listdir(f"{modelDir}/Scram") == []:
+            if messagebox.askyesno("SCRAM files were detected!", "Would you like to use the SCRAM files instead?"):
+                copy_files_to_directory(f"{modelDir}/Scram", "plugins/TEMP", [".jm", ".scram"])
+            else:
+                copy_files_to_directory(f"{modelDir}/JM", "plugins/TEMP")  # JM files
 
 
 def scram_all():
@@ -448,22 +490,23 @@ def scram_jms():
 
 
 def run_scram_files(typeIndex):
+    print("[Scram]: Starting SCRAM. Please be patient...")
     # Change into working directory just to be safe
     os.chdir(workingDirectory)
     # Check to see if the model name is empty
     if modelNameEntry.get().lower() == "":
-        print("SCRAM Files: You need to supply a model name to scram your files...")
+        print("[SCRAM]: You need to supply a model name to scram your files...")
         return
     else:
         # Check to see if there is a root directory
         if root.directory == None:
-            print("SCRAM Files: You need to supply a directory...")
+            print("[SCRAM]: You need to supply a directory...")
             return
         else:
             # Make TEMP folder in plugins
             if not path.exists("plugins/TEMP"):
                 os.makedirs("plugins/TEMP")
-                print("SCRAM Files: Created temp export directory...")
+                print("[SCRAM]: Created temp export directory...")
             # Copy all necessary files to the temp folder
             renamedFilesDirectory = f"{root.directory}/RenamedFiles"
             subDirs = os.listdir(renamedFilesDirectory)
@@ -474,19 +517,19 @@ def run_scram_files(typeIndex):
                     modelDir = f"{renamedFilesDirectory}/{dir}"
 
             if modelDir == None:
-                print("[SCRAM Files]: Your model name does not match any existing directories...")
+                print("[SCRAM]: Your model name does not match any existing directories...")
                 return
             else:
                 # Copy maps to export folder
                 if typeIndex == 0 or typeIndex == 1:
                     if not path.exists(f"{modelDir}/Maps"):
-                        print(f"[SCRAM Files]: No map files were found...")
+                        print(f"[SCRAM]: No map files were found...")
                     else:
                         copy_files_to_directory(f"{modelDir}/Maps", "plugins/TEMP")  # Map files
                 # Copy JMs to export folder
                 if typeIndex == 0 or typeIndex == 2:
                     if not path.exists(f"{modelDir}/JM"):
-                        print(f"[SCRAM Files]: No JM files were found...")
+                        print(f"[SCRAM]: No JM files were found...")
                     else:
                         copy_files_to_directory(f"{modelDir}/JM", "plugins/TEMP")  # JM files
                 # Decide which platform binary to use
@@ -494,11 +537,10 @@ def run_scram_files(typeIndex):
                 if platform == "Windows":
                     binaryName = "mxscram.exe"
                 elif platform == "Linux":
-                    binaryName == "mxscram"
+                    binaryName == "./mxscram"
                 else:
                     # return because we have no other binaries
-                    print(
-                        "[SCRAM]: There are no binaries that can be used on your system.\nScram only supports Windows and Linux...")
+                    print("[SCRAM]: There are no binaries that can be used on your system.\nScram only supports Windows and Linux...")
                     return
                 # Get files in temp directory
                 files = os.listdir(f"plugins/TEMP")
@@ -508,8 +550,9 @@ def run_scram_files(typeIndex):
                     return
                 # Delete all files in the output directory
                 scramFileDirectory = f"{root.directory}/RenamedFiles/{modelNameEntry.get().lower()}/Scram"
-                for f in os.listdir(scramFileDirectory):
-                    os.remove(f"{scramFileDirectory}/{f}")
+                if path.exists(scramFileDirectory):
+                    for f in os.listdir(scramFileDirectory):
+                        os.remove(f"{scramFileDirectory}/{f}")
                 for f in files:
                     if not f == f"{modelNameEntry.get().lower()}.saf":
                         # Check file extension
@@ -547,8 +590,6 @@ def scram_file(args):
     if not path.exists(f"{workingDirectory}/plugins/TEMP/{args[0]}"):
         shutil.copyfile(f"{workingDirectory}/plugins/{args[0]}", f"{workingDirectory}/plugins/TEMP/{args[0]}")
 
-
-    # TODO:  SCRAM the files
     scramName = f"{args[len(args) - 1]}"
     safCreationCommand = subprocess.Popen(args, shell=True).wait()
     # Move the saf file back to the renamed files directory
@@ -572,7 +613,7 @@ def on_window_close():
     # Clean up the TEMP folders
     clean_temp_folders()
     # Destory the root window
-    root.destroy();
+    root.destroy()
 
 
 # Run the TK setup and loop
