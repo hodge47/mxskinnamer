@@ -40,5 +40,6 @@ You can either rename skins and JMs separately on their own or all together at o
 7. Move to your game install directory or personal folder
 
 ### Dependencies Used
-Saf Creator - Josh Vanderhoof - (http://forum.mxsimulator.com/viewtopic.php?t=321)
-Scram Creator - Josh Vanderhoof - (http://forum.mxsimulator.com/viewtopic.php?f=1&t=25271)
+Saf Creator - Josh Vanderhoof - http://forum.mxsimulator.com/viewtopic.php?t=321
+
+Scram Creator - Josh Vanderhoof - http://forum.mxsimulator.com/viewtopic.php?f=1&t=25271
