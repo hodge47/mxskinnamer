@@ -156,7 +156,7 @@ def rename_all_files():
         print("You need to choose a directory that has skins or jms...")
         return
     # Check to see if the model name entry is blank
-    if modelNameEntry.get().lower() == "":
+    if modelNameEntry.get() == "":
         print("You need to supply a model name...")
         return
     # Check to see if a dyno is selected
@@ -177,7 +177,7 @@ def rename_map_files():
         print("You need to choose a directory that has skins...")
         return
     # Check to see if the model name entry is blank
-    if modelNameEntry.get().lower() == "":
+    if modelNameEntry.get() == "":
         print("You need to supply a model name...")
         return
     # Check to see if a dyno is selected
@@ -195,7 +195,7 @@ def rename_map_files():
     diffuseMaps = sortedMaps[2]
 
     # Create a place to store the maps
-    newPaths = create_directory(root.directory, modelNameEntry.get().lower())
+    newPaths = create_directory(root.directory, modelNameEntry.get())
 
     # Create new maps and JMs
     copy_maps_to_directory(newPaths[1])
@@ -219,7 +219,7 @@ def rename_jm_files():
         print("You need to choose a directory that has jms...")
         return
     # Check to see if the model name entry is blank
-    if modelNameEntry.get().lower() == "":
+    if modelNameEntry.get() == "":
         print("You need to supply a model name...")
         return
     # Check to see if a dyno is selected
@@ -228,7 +228,7 @@ def rename_jm_files():
         return
 
     # Get paths for new JMs
-    newPaths = create_directory(root.directory, modelNameEntry.get().lower())
+    newPaths = create_directory(root.directory, modelNameEntry.get())
     # Copy jms to new directory
     copy_jms_to_directory(newPaths[2])
     # Rename all of the JMs
@@ -284,21 +284,21 @@ def rename_map(directory, map, special):
             dynoValue = dynosList[dynoSelection]
     output = None
     if special == "norm":
-        output = f"{directory}/{dynoValue}-{modelNameEntry.get().lower()}_norm.png"
+        output = f"{directory}/{dynoValue}-{modelNameEntry.get()}_norm.png"
         try:
             os.rename(f"{directory}/{map}", output)
         except OSError as e:
             os.remove(output)
             os.rename(f"{directory}/{map}", output)
     elif special == "spec":
-        output = f"{directory}/{dynoValue}-{modelNameEntry.get().lower()}_spec.png"
+        output = f"{directory}/{dynoValue}-{modelNameEntry.get()}_spec.png"
         try:
             os.rename(f"{directory}/{map}", output)
         except OSError as e:
             os.remove(output)
             os.rename(f"{directory}/{map}", output)
     else:
-        output = f"{directory}/{dynoValue}-{modelNameEntry.get().lower()}-{filename}"
+        output = f"{directory}/{dynoValue}-{modelNameEntry.get()}-{filename}"
         try:
             os.rename(f"{directory}/{map}", output)
         except OSError as e:
@@ -316,13 +316,13 @@ def rename_jm(directory, jm):
     # Extract JM type
     jmType = None
     for type in jmParts:
-        if type.lower() == "wheels":
+        if type == "wheels":
             saveDir = f"{directory}"
             filename = None
-            if "front_wheel" in jm.lower():
-                filename = f"front_wheel-{modelNameEntry.get().lower()}.jm"
-            elif "rear_wheel" in jm.lower():
-                filename = f"rear_wheel-{modelNameEntry.get().lower()}.jm"
+            if "front_wheel" in jm:
+                filename = f"front_wheel-{modelNameEntry.get()}.jm"
+            elif "rear_wheel" in jm:
+                filename = f"rear_wheel-{modelNameEntry.get()}.jm"
             else:
                 continue
             # See if file exists - need to delete if so or error on windows, MacOS and Linux OK
@@ -332,13 +332,13 @@ def rename_jm(directory, jm):
             os.rename(f"{saveDir}/{jm}", f"{saveDir}/{filename}")
         else:
             # Cast to lowercase just in case the JM is saved weird
-            if type.lower() in jm.lower():
+            if type in jm:
                 jmType = type
                 saveDir = f"{directory}"
-                filename = f"{dynoValue}_{jmType}-{modelNameEntry.get().lower()}.jm"
+                filename = f"{dynoValue}_{jmType}-{modelNameEntry.get()}.jm"
                 # Change file name to only dyno and model name if rider or wheels
-                if jmType.lower() == "rider_body" or jmType.lower() == "rider_head":
-                    filename = f"{dynoValue}-{modelNameEntry.get().lower()}.jm"
+                if jmType == "rider_body" or jmType == "rider_head":
+                    filename = f"{dynoValue}-{modelNameEntry.get()}.jm"
                 # See if file exists - need to delete if so or error on windows, MacOS and Linux OK
                 if os.path.exists(f"{saveDir}/{filename}"):
                     os.remove(f"{saveDir}/{filename}")
@@ -362,7 +362,7 @@ def run_saf_files(typeIndex):
     # Change into working directory just to be safe
     os.chdir(workingDirectory)
     # Check to see if the model name is empty
-    if modelNameEntry.get().lower() == "":
+    if modelNameEntry.get() == "":
         print("SAF Files: You need to supply a model name to saf your files...")
         return
     else:
@@ -381,7 +381,7 @@ def run_saf_files(typeIndex):
             modelDir = None
             # Get all the sub-directories and set modelDir if one matches the modelEntry
             for dir in subDirs:
-                if dir.lower() == modelNameEntry.get().lower():
+                if dir == modelNameEntry.get():
                     modelDir = f"{renamedFilesDirectory}/{dir}"
 
             if modelDir == None:
@@ -404,14 +404,14 @@ def run_saf_files(typeIndex):
                 args.append('saf.py')
                 files = os.listdir(f"plugins/TEMP")
                 for f in files:
-                    if not f == f"{modelNameEntry.get().lower()}.saf" and not f == "saf.py":
+                    if not f == f"{modelNameEntry.get()}.saf" and not f == "saf.py":
                         # Check file extension
                         ext = splitext(f)
 
                         if ext[1] == ".png" or ext[1] == ".jm" or ext[1] == ".scram":
                             args.append(f"{f}")  # \s was not working so make sure the space stays
                 # Add saf name to args list
-                args.append(f"{modelNameEntry.get().lower()}.saf")
+                args.append(f"{modelNameEntry.get()}.saf")
 
                 if len(args) == 3:
                     print("[SAF Files]: It looks like no files were added to the args for the saf subprocess. Exiting function...")
@@ -427,10 +427,10 @@ def run_saf_files(typeIndex):
 
                 # Change into the plugins/TEMP directory
                 os.chdir("plugins/TEMP")
-                safName = f"{modelNameEntry.get().lower()}.saf"
+                safName = f"{modelNameEntry.get()}.saf"
                 safCreationCommand = subprocess.Popen(args, shell=True).wait()
                 # Move the saf file back to the renamed files directory
-                safFilePath = f"{root.directory}/RenamedFiles/{modelNameEntry.get().lower()}/Saf"
+                safFilePath = f"{root.directory}/RenamedFiles/{modelNameEntry.get()}/Saf"
                 if not path.exists(safFilePath):
                     os.makedirs(safFilePath)
                 shutil.copyfile(f"{safName}", f"{safFilePath}/{safName}")
@@ -445,12 +445,16 @@ def run_saf_all(modelDir):
         print(f"[SAF Files]: No map or JM files were found...")
     else:
         # Check for Scram folder
-        if not os.listdir(f"{modelDir}/Scram") == []:
-            if messagebox.askyesno("SCRAM files were detected!", "Would you like to use the SCRAM files instead?"):
-                copy_files_to_directory(f"{modelDir}/Scram", "plugins/TEMP", [".png", ".jm", ".scram"])
-            else:
-                copy_files_to_directory(f"{modelDir}/Maps", "plugins/TEMP")
-                copy_files_to_directory(f"{modelDir}/JM", "plugins/TEMP")
+        if path.exists(f"{modelDir}/Scram"):
+            if not os.listdir(f"{modelDir}/Scram") == []:
+                if messagebox.askyesno("SCRAM files were detected!", "Would you like to use the SCRAM files instead?"):
+                    copy_files_to_directory(f"{modelDir}/Scram", "plugins/TEMP", [".png", ".jm", ".scram"])
+                else:
+                    copy_files_to_directory(f"{modelDir}/Maps", "plugins/TEMP")
+                    copy_files_to_directory(f"{modelDir}/JM", "plugins/TEMP")
+        else:
+            copy_files_to_directory(f"{modelDir}/Maps", "plugins/TEMP")
+            copy_files_to_directory(f"{modelDir}/JM", "plugins/TEMP")
 
 
 def run_saf_maps(modelDir):
@@ -494,7 +498,7 @@ def run_scram_files(typeIndex):
     # Change into working directory just to be safe
     os.chdir(workingDirectory)
     # Check to see if the model name is empty
-    if modelNameEntry.get().lower() == "":
+    if modelNameEntry.get() == "":
         print("[SCRAM]: You need to supply a model name to scram your files...")
         return
     else:
@@ -513,7 +517,7 @@ def run_scram_files(typeIndex):
             modelDir = None
             # Get all the sub-directories and set modelDir if one matches the modelEntry
             for dir in subDirs:
-                if dir.lower() == modelNameEntry.get().lower():
+                if dir == modelNameEntry.get():
                     modelDir = f"{renamedFilesDirectory}/{dir}"
 
             if modelDir == None:
@@ -549,12 +553,12 @@ def run_scram_files(typeIndex):
                     print("[SCRAM]: There are no files to scram!")
                     return
                 # Delete all files in the output directory
-                scramFileDirectory = f"{root.directory}/RenamedFiles/{modelNameEntry.get().lower()}/Scram"
+                scramFileDirectory = f"{root.directory}/RenamedFiles/{modelNameEntry.get()}/Scram"
                 if path.exists(scramFileDirectory):
                     for f in os.listdir(scramFileDirectory):
                         os.remove(f"{scramFileDirectory}/{f}")
                 for f in files:
-                    if not f == f"{modelNameEntry.get().lower()}.saf":
+                    if not f == f"{modelNameEntry.get()}.saf":
                         # Check file extension
                         ext = splitext(f)
                         if ext[1] == ".png" or ext[1] == ".jm":
@@ -593,7 +597,7 @@ def scram_file(args):
     scramName = f"{args[len(args) - 1]}"
     safCreationCommand = subprocess.Popen(args, shell=True).wait()
     # Move the saf file back to the renamed files directory
-    scramFilePath = f"{root.directory}/RenamedFiles/{modelNameEntry.get().lower()}/Scram"
+    scramFilePath = f"{root.directory}/RenamedFiles/{modelNameEntry.get()}/Scram"
     if not path.exists(scramFilePath):
         os.makedirs(scramFilePath)
         print(f"[SCRAM]: Created scram directory for {modelNameEntry.get()}")
