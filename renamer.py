@@ -330,6 +330,22 @@ def rename_jm(directory, jm):
                 os.remove(f"{saveDir}/{filename}")
             # Rename the jm file
             os.rename(f"{saveDir}/{jm}", f"{saveDir}/{filename}")
+        if type == "rider_body":
+            saveDir = f"{directory}"
+            filename = None
+            if "rider_body_fp" in jm:
+                filename = f"{dynoValue}_fp-{modelNameEntry.get()}.jm"
+            elif "rider_body" in jm:
+                filename = f"{dynoValue}-{modelNameEntry.get()}.jm"
+            else:
+                continue
+
+            print(filename)
+            # See if file exists - need to delete if so or error on windows, MacOS and Linux OK
+            if os.path.exists(f"{saveDir}/{filename}"):
+                os.remove(f"{saveDir}/{filename}")
+            # Rename the jm file
+            os.rename(f"{saveDir}/{jm}", f"{saveDir}/{filename}")
         else:
             # Cast to lowercase just in case the JM is saved weird
             if type in jm:
